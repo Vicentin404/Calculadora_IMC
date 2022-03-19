@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style/style.css">
+    <title>Calculadora de IMC</title>
+</head>
+<body>
+    <header>
+        <h1>Calcule seu índice de massa corporal</h1>
+        <p>O IMC é um parâmetro adotado pela Organização Mundial de Saúde para calcular o peso ideal de cada pessoa.</p>
+    </header>
+    <main>
+        <div class="container">
+            <div class="tabela">
+                <table>
+                    
+                        <thead>
+                            <th scope="col">IMC</th>
+                            <th scope="col">Classificação</th>
+                        </thead>                    
+                    <tr>
+                        <td>Menor que 18.5</td> 
+                        <td>Abaixo do Peso</td>                       
+                    </tr>
+                    <tr>
+                        <td class="normal"><strong>18.5 e 24.9</strong></td>
+                        <td class="normal"><strong>Peso Normal</strong></td>
+                    </tr>
+                    <tr>
+                        <td class="alerta">25.0 e 29.9</td>
+                        <td class="alerta">Pré-obesidade</td>
+                    </tr>
+                    <tr>
+                        <td class="cuidado">30.0 e 34.9</td>
+                        <td class="cuidado">Obesidade Grau 1</td>
+                    </tr>
+                    <tr>
+                        <td class="cuidado">35.0 e 39.9</td>
+                        <td class="cuidado">Obesidade Grau 2</td>
+                    </tr>
+                    <tr>
+                        <td class="cuidado">maior que 40</td>
+                        <td class="cuidado">Obesidade Grau 3</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="calculo">
+                <p>Digite a sua Altura: <input type="number" name="altura" id="altura" placeholder="Ex: 167.2"></p>
+                <p>Digite Seu peso: <input type="number" name="peso" id="peso" style="margin-left: 21px;padding-right: 1px;" placeholder="Ex: 89.5"> <br><input class="btn" type="button" value="Calcular" onclick="calcular()"></p>
+                <div id="resultado" style="margin-top: 10px;">Procure um especialista para mais informações</div>
+            </div>
+        </div>
+    </main>
+    <footer>
+
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>
