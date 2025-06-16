@@ -2,61 +2,614 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./style/style.css">
-    <title>Calculadora de IMC</title>
+    <title>Calculadora de IMC Inteligente</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            animation: fadeInDown 1s ease-out;
+        }
+        
+        header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            animation: fadeInUp 1s ease-out;
+        }
+        
+        .calculator-card h2 {
+            color: #4a5568;
+            margin-bottom: 25px;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #4a5568;
+        }
+        
+        .input-wrapper {
+            position: relative;
+        }
+        
+        .input-wrapper input {
+            width: 100%;
+            padding: 15px 50px 15px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .input-wrapper input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .input-unit {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0aec0;
+            font-weight: 500;
+        }
+        
+        .calc-button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .calc-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .calc-button:active {
+            transform: translateY(0);
+        }
+        
+        .table-card h2 {
+            color: #4a5568;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .imc-table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .imc-table th {
+            background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+            color: white;
+            padding: 15px;
+            font-weight: 600;
+            text-align: left;
+        }
+        
+        .imc-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .status-baixo { background-color: #bee3f8; }
+        .status-normal { background-color: #c6f6d5; }
+        .status-sobrepeso { background-color: #fef5e7; }
+        .status-obesidade1 { background-color: #fed7d7; }
+        .status-obesidade2 { background-color: #fbb6ce; }
+        .status-obesidade3 { background-color: #f687b3; }
+        
+        .result-section {
+            grid-column: 1 / -1;
+            margin-top: 20px;
+        }
+        
+        .result-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            text-align: center;
+            display: none;
+            animation: slideInUp 0.5s ease-out;
+        }
+        
+        .result-card.show {
+            display: block;
+        }
+        
+        .imc-display {
+            font-size: 3rem;
+            font-weight: 700;
+            margin: 20px 0;
+            color: #4a5568;
+        }
+        
+        .classification {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            border-radius: 25px;
+            display: inline-block;
+        }
+        
+        .suggestions {
+            background: #f7fafc;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 20px;
+            text-align: left;
+        }
+        
+        .suggestions h3 {
+            color: #2d3748;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+        
+        .suggestions ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .suggestions li {
+            background: white;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-left: 4px solid #667eea;
+        }
+        
+        .ideal-weight {
+            background: #e6fffa;
+            border: 2px solid #38b2ac;
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 15px;
+            text-align: center;
+        }
+        
+        .ideal-weight h4 {
+            color: #2c7a7b;
+            margin-bottom: 5px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #48bb78, #38a169);
+            border-radius: 10px;
+            transition: width 1s ease-out;
+            position: relative;
+        }
+        
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+        }
+        
+        .warning {
+            background: #fef5e7;
+            border: 1px solid #f6ad55;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            color: #c05621;
+        }
+        
+        .bmi-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .bmi-circle {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <h1>Calcule seu índice de massa corporal</h1>
-        <p>O IMC é um parâmetro adotado pela Organização Mundial de Saúde para calcular o peso ideal de cada pessoa.</p>
-    </header>
-    <main>
-        <div class="container">
-            <div class="tabela">
-                <table>
-                    
-                        <thead>
-                            <th scope="col">IMC</th>
-                            <th scope="col">Classificação</th>
-                        </thead>                    
-                    <tr>
-                        <td>Menor que 18.5</td> 
-                        <td>Abaixo do Peso</td>                       
-                    </tr>
-                    <tr>
-                        <td class="normal"><strong>18.5 e 24.9</strong></td>
-                        <td class="normal"><strong>Peso Normal</strong></td>
-                    </tr>
-                    <tr>
-                        <td class="alerta">25.0 e 29.9</td>
-                        <td class="alerta">Pré-obesidade</td>
-                    </tr>
-                    <tr>
-                        <td class="cuidado">30.0 e 34.9</td>
-                        <td class="cuidado">Obesidade Grau 1</td>
-                    </tr>
-                    <tr>
-                        <td class="cuidado">35.0 e 39.9</td>
-                        <td class="cuidado">Obesidade Grau 2</td>
-                    </tr>
-                    <tr>
-                        <td class="cuidado">maior que 40</td>
-                        <td class="cuidado">Obesidade Grau 3</td>
-                    </tr>
+    <div class="container">
+        <header>
+            <h1>🏃‍♀️ Calculadora de IMC Inteligente</h1>
+            <p>Descubra seu Índice de Massa Corporal e receba sugestões personalizadas para uma vida mais saudável</p>
+        </header>
+
+        <div class="main-content">
+            <div class="card calculator-card">
+                <h2>📊 Calcular IMC</h2>
+                
+                <div class="input-group">
+                    <label for="altura">Altura:</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="altura" placeholder="Ex: 1.70" step="0.01" min="0.5" max="2.5">
+                        <span class="input-unit">m</span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="peso">Peso:</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="peso" placeholder="Ex: 70.5" step="0.1" min="20" max="300">
+                        <span class="input-unit">kg</span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="idade">Idade (opcional):</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="idade" placeholder="Ex: 25" min="10" max="120">
+                        <span class="input-unit">anos</span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="sexo">Sexo (opcional):</label>
+                    <select id="sexo" style="width: 100%; padding: 15px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 1rem;">
+                        <option value="">Selecione</option>
+                        <option value="masculino">Masculino</option>
+                        <option value="feminino">Feminino</option>
+                    </select>
+                </div>
+
+                <button class="calc-button" onclick="calcularIMC()">
+                    Calcular IMC
+                </button>
+            </div>
+
+            <div class="card table-card">
+                <h2>📋 Classificação do IMC</h2>
+                <table class="imc-table">
+                    <thead>
+                        <tr>
+                            <th>IMC</th>
+                            <th>Classificação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="status-baixo">
+                            <td>&lt; 18.5</td>
+                            <td>Abaixo do Peso</td>
+                        </tr>
+                        <tr class="status-normal">
+                            <td>18.5 - 24.9</td>
+                            <td><strong>Peso Normal</strong></td>
+                        </tr>
+                        <tr class="status-sobrepeso">
+                            <td>25.0 - 29.9</td>
+                            <td>Sobrepeso</td>
+                        </tr>
+                        <tr class="status-obesidade1">
+                            <td>30.0 - 34.9</td>
+                            <td>Obesidade Grau I</td>
+                        </tr>
+                        <tr class="status-obesidade2">
+                            <td>35.0 - 39.9</td>
+                            <td>Obesidade Grau II</td>
+                        </tr>
+                        <tr class="status-obesidade3">
+                            <td>≥ 40.0</td>
+                            <td>Obesidade Grau III</td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
-            <div class="calculo">
-                <p>Digite a sua Altura: <input type="number" name="altura" id="altura" placeholder="Ex: 167.2"></p>
-                <p>Digite Seu peso: <input type="number" name="peso" id="peso" style="margin-left: 21px;padding-right: 1px;" placeholder="Ex: 89.5"> <br><input class="btn" type="button" value="Calcular" onclick="calcular()"></p>
-                <div id="resultado" style="margin-top: 10px;">Procure um especialista para mais informações</div>
+        </div>
+
+        <div class="result-section">
+            <div id="resultado" class="result-card">
+                <div class="bmi-indicator">
+                    <div id="bmi-circle" class="bmi-circle"></div>
+                    <div>
+                        <div class="imc-display" id="imc-valor"></div>
+                        <div class="classification" id="classificacao"></div>
+                    </div>
+                </div>
+
+                <div class="ideal-weight" id="peso-ideal">
+                    <!-- Peso ideal será inserido aqui -->
+                </div>
+
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress" style="width: 0%"></div>
+                </div>
+
+                <div class="suggestions" id="sugestoes">
+                    <!-- Sugestões serão inseridas aqui -->
+                </div>
+
+                <div class="warning">
+                    <strong>⚠️ Importante:</strong> Este cálculo é apenas indicativo. Sempre consulte um profissional de saúde para avaliação completa e orientações personalizadas.
+                </div>
             </div>
         </div>
-    </main>
-    <footer>
+    </div>
 
-    </footer>
-    <script src="script.js"></script>
+    <script>
+        function calcularIMC() {
+            const altura = parseFloat(document.getElementById('altura').value);
+            const peso = parseFloat(document.getElementById('peso').value);
+            const idade = parseInt(document.getElementById('idade').value) || null;
+            const sexo = document.getElementById('sexo').value;
+
+            // Validação
+            if (!altura || !peso || altura <= 0 || peso <= 0) {
+                alert('⚠️ Por favor, preencha altura e peso com valores válidos!');
+                return;
+            }
+
+            if (altura > 10) {
+                alert('⚠️ Por favor, digite a altura em metros (ex: 1.70)');
+                return;
+            }
+
+            // Cálculo do IMC
+            const imc = peso / (altura * altura);
+            
+            // Determinar classificação e cor
+            let classificacao, cor, sugestoes, pesoIdeal;
+            
+            if (imc < 18.5) {
+                classificacao = 'Abaixo do Peso';
+                cor = '#3182ce';
+                sugestoes = getSugestoesAbaixoPeso(idade, sexo);
+            } else if (imc < 25) {
+                classificacao = 'Peso Normal';
+                cor = '#38a169';
+                sugestoes = getSugestoesPesoNormal(idade, sexo);
+            } else if (imc < 30) {
+                classificacao = 'Sobrepeso';
+                cor = '#d69e2e';
+                sugestoes = getSugestoesSobrepeso(idade, sexo);
+            } else if (imc < 35) {
+                classificacao = 'Obesidade Grau I';
+                cor = '#e53e3e';
+                sugestoes = getSugestoesObesidade1(idade, sexo);
+            } else if (imc < 40) {
+                classificacao = 'Obesidade Grau II';
+                cor = '#c53030';
+                sugestoes = getSugestoesObesidade2(idade, sexo);
+            } else {
+                classificacao = 'Obesidade Grau III';
+                cor = '#9b2c2c';
+                sugestoes = getSugestoesObesidade3(idade, sexo);
+            }
+
+            // Calcular peso ideal
+            const pesoIdealMin = (18.5 * altura * altura).toFixed(1);
+            const pesoIdealMax = (24.9 * altura * altura).toFixed(1);
+            
+            // Atualizar interface
+            document.getElementById('imc-valor').textContent = imc.toFixed(1);
+            document.getElementById('classificacao').textContent = classificacao;
+            document.getElementById('classificacao').style.backgroundColor = cor;
+            document.getElementById('classificacao').style.color = 'white';
+            
+            document.getElementById('bmi-circle').textContent = imc.toFixed(1);
+            document.getElementById('bmi-circle').style.backgroundColor = cor;
+            
+            document.getElementById('peso-ideal').innerHTML = `
+                <h4>🎯 Faixa de Peso Ideal</h4>
+                <p><strong>${pesoIdealMin}kg - ${pesoIdealMax}kg</strong></p>
+                <p>Para sua altura de ${altura}m</p>
+            `;
+            
+            document.getElementById('sugestoes').innerHTML = `
+                <h3>💡 Sugestões Personalizadas</h3>
+                <ul>${sugestoes}</ul>
+            `;
+
+            // Calcular progresso (normalizado para 0-100%)
+            const progress = Math.min(Math.max((imc - 15) / 25 * 100, 0), 100);
+            document.getElementById('progress').style.width = progress + '%';
+            
+            // Mostrar resultado
+            document.getElementById('resultado').classList.add('show');
+            document.getElementById('resultado').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function getSugestoesAbaixoPeso(idade, sexo) {
+            return `
+                <li>🍽️ <strong>Alimentação:</strong> Aumente a ingestão calórica com alimentos nutritivos como castanhas, abacate, azeite e proteínas</li>
+                <li>💪 <strong>Exercícios:</strong> Foque em treinos de força para ganhar massa muscular</li>
+                <li>⏰ <strong>Frequência:</strong> Faça refeições mais frequentes (5-6 por dia)</li>
+                <li>🥛 <strong>Suplementação:</strong> Considere shakes proteicos entre as refeições</li>
+                <li>👨‍⚕️ <strong>Acompanhamento:</strong> Consulte um nutricionista para um plano personalizado</li>
+            `;
+        }
+
+        function getSugestoesPesoNormal(idade, sexo) {
+            return `
+                <li>🎉 <strong>Parabéns!</strong> Você está na faixa de peso ideal para sua altura</li>
+                <li>🥗 <strong>Manutenção:</strong> Continue com uma alimentação equilibrada e variada</li>
+                <li>🏃‍♀️ <strong>Atividade física:</strong> Mantenha-se ativo com 150min de exercícios por semana</li>
+                <li>💧 <strong>Hidratação:</strong> Beba pelo menos 2L de água por dia</li>
+                <li>😴 <strong>Descanso:</strong> Durma de 7-9 horas por noite para manter o metabolismo</li>
+                <li>📊 <strong>Monitoramento:</strong> Continue monitorando seu peso regularmente</li>
+            `;
+        }
+
+        function getSugestoesSobrepeso(idade, sexo) {
+            return `
+                <li>🎯 <strong>Meta:</strong> Perda gradual de 0,5-1kg por semana é o ideal</li>
+                <li>🥘 <strong>Alimentação:</strong> Reduza carboidratos refinados e aumente vegetais e proteínas</li>
+                <li>🚶‍♀️ <strong>Cardio:</strong> Inclua 30-45min de caminhada/corrida 4-5x por semana</li>
+                <li>🍽️ <strong>Porções:</strong> Use pratos menores e mastigue devagar</li>
+                <li>📱 <strong>Controle:</strong> Considere usar apps para monitorar calorias</li>
+                <li>👥 <strong>Apoio:</strong> Busque apoio de amigos, família ou grupos de apoio</li>
+            `;
+        }
+
+        function getSugestoesObesidade1(idade, sexo) {
+            return `
+                <li>⚕️ <strong>Profissional:</strong> Consulte médico e nutricionista urgentemente</li>
+                <li>🎯 <strong>Meta inicial:</strong> Perda de 5-10% do peso atual já traz benefícios</li>
+                <li>🚫 <strong>Evite:</strong> Dietas muito restritivas, foque em mudanças sustentáveis</li>
+                <li>💪 <strong>Exercícios:</strong> Comece com atividades de baixo impacto (natação, caminhada)</li>
+                <li>🧠 <strong>Comportamento:</strong> Identifique gatilhos emocionais da alimentação</li>
+                <li>📅 <strong>Planejamento:</strong> Prepare refeições com antecedência</li>
+            `;
+        }
+
+        function getSugestoesObesidade2(idade, sexo) {
+            return `
+                <li>🚨 <strong>Urgente:</strong> Acompanhamento médico multidisciplinar é essencial</li>
+                <li>💊 <strong>Tratamento:</strong> Discuta opções de medicação com seu médico</li>
+                <li>🏥 <strong>Exames:</strong> Monitore pressão, glicemia e colesterol regularmente</li>
+                <li>👨‍⚕️ <strong>Equipe:</strong> Considere acompanhamento com psicólogo especializado</li>
+                <li>🎯 <strong>Foco:</strong> Pequenas mudanças consistentes são mais eficazes</li>
+                <li>🚫 <strong>Risco:</strong> Evite exercícios de alto impacto sem supervisão</li>
+            `;
+        }
+
+        function getSugestoesObesidade3(idade, sexo) {
+            return `
+                <li>🚨 <strong>Crítico:</strong> Procure atendimento médico especializado imediatamente</li>
+                <li>🏥 <strong>Cirurgia:</strong> Avalie com médico a possibilidade de cirurgia bariátrica</li>
+                <li>💊 <strong>Medicação:</strong> Tratamentos farmacológicos podem ser necessários</li>
+                <li>👥 <strong>Apoio intensivo:</strong> Equipe multidisciplinar completa é fundamental</li>
+                <li>🎯 <strong>Prioridade:</strong> Foque primeiro na estabilização da saúde</li>
+                <li>❤️ <strong>Suporte:</strong> Busque apoio psicológico e de grupos especializados</li>
+            `;
+        }
+
+        // Adicionar eventos para calcular automaticamente quando todos os campos estão preenchidos
+        document.getElementById('altura').addEventListener('input', function() {
+            if (this.value && document.getElementById('peso').value) {
+                setTimeout(calcularIMC, 500);
+            }
+        });
+
+        document.getElementById('peso').addEventListener('input', function() {
+            if (this.value && document.getElementById('altura').value) {
+                setTimeout(calcularIMC, 500);
+            }
+        });
+
+        // Permitir cálculo com Enter
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                calcularIMC();
+            }
+        });
+    </script>
 </body>
 </html>
